@@ -1,0 +1,18 @@
+body {
+    display: flex;
+    justify-content: center; /* Centers the card horizontally */
+    align-items: center;     /* Centers the card vertically */
+    height: 100vh;           /* Makes the body takes up the full screen height */
+    background-color: lightgray; /* Makes the Background grey*/
+}
+
+.card {
+    display: flex;
+    justify-content: center; /* makes the words horizontally center*/
+    align-items: center; /* makes the word vertically center*/
+    height: 500px; /* makes the card 100px in height*/
+    width: 1100px; /* makes the card 100px in width*/
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /*Gives the card a shadow*/
+    border-radius: 5px; /* makes the cornors round*/
+    background-color: lightcoral; /* background color of the card */
+}
