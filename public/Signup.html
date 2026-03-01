@@ -7,14 +7,17 @@
   </head>
   <body>
     <div class="card">
-      <h2>Enter Gmail</h2>
-      <input type="text" placeholder="Gmail" />
-      <h2>Create Username</h2>
-      <input type="text" placeholder="Username" />
-      <h2>Create Password</h2>
-      <input type="password" class="form-control" placeholder="Password" />
-      <button id="Submit">Submit</button>
-      <a href="Login.html">Log In</a>
+      <form id="signupForm" method="post" action="/signup">
+        <h2>Enter Email</h2>
+        <input type="text" placeholder="email" />
+        <h2>Create Username</h2>
+        <input type="text" placeholder="username" />
+        <h2>Create Password</h2>
+        <input type="password" class="form-control" placeholder="password" />
+        <p id="error" style="color: red"></p>
+        <button id="Submit">Submit</button>
+      </form>
     </div>
   </body>
+  <script src="/Signup.js"> </script>
 </html>
