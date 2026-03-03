@@ -17,4 +17,15 @@ db.run(`
   )
 `);
 
+db.run(`
+    CREATE TABLE IF NOT EXISTS rooms (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT UNIQUE NOT NULL,
+  creator_id INTEGER NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (creator_id) REFERENCES users(id)
+)
+`);
+    
+
 module.exports = db;
