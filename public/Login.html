@@ -4,18 +4,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
     <link rel="stylesheet" href="styles.css" />
-    <script src="/Login.js"> </script>
   </head>
   <body>
+    <div id="navbar"></div>
     <form method="get" name="loginForm" id="loginForm">
       <div class="card">
         <h2>Username</h2>
-        <input id="un" name="username" type="text" placeholder="Username" required min="3" max="20" minlength="3" maxlength="20"/>
+        <input id="username" name="username" type="text" placeholder="Username or Email" required/>
         <h2>Password</h2>
-        <input id="pw" name="password" type="password" placeholder="Password" required min="8" max="20" minlength="8" maxlength="20"/>
+        <input id="password" name="password" type="password" placeholder="Password" required/>
         <p id="error" style="color: red"></p>
         <button type="submit" id="Login">Login</button>
       </div>
     </form>
   </body>
+  <script src="/navbar.js"></script>
+  <script src="/Login.js"></script>
 </html>

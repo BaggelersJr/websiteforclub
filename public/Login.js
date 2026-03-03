@@ -3,7 +3,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 
   const login = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value;
-  const errorElement = document.getElementById("errorMessage");
+  const errorElement = document.getElementById("error");
   errorElement.textContent = "";
   try {
     const response = await fetch("/login", {

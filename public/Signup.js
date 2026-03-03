@@ -1,12 +1,10 @@
 document.getElementById("signupForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
-
-  const email = document.querySelector("input[placeholder='email']").value;
-  const username = document.querySelector("input[placeholder='username']").value;
-  const password = document.querySelector("input[type='password']").value;
-
-  const response = await fetch("/signup", {
+    const email = document.getElementById("email").value.trim();
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+    const response = await fetch("/signup", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, username, password })
@@ -14,7 +12,7 @@ document.getElementById("signupForm").addEventListener("submit", async function 
 
   const data = await response.json();
 
-const errorElement = document.getElementById("errorMessage");
+const errorElement = document.getElementById("error");
 
 if (data.success) {
   errorElement.textContent = "";

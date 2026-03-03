@@ -7,19 +7,19 @@ async function loadnav() {
         navbar.innerHTML = `
             <ul>
                 <li><a href="/">Home</a></li>
-                <li><a href="/discover">Discover</a></li>
-                <li><a href="/create">Create</a></li>
-                <li><a href="/profile">Profile</a></li>
-                <li><a href="/logout">Logout</a></li>
+                <li><a href="/Discover.html">Discover</a></li>
+                <li><a href="/Create.html">Create</a></li>
+                <li><a href="/Profile.html">Profile</a></li>
+                <li><a href="/Login.html">Logout</a></li>
             </ul>
         `;
     }
     else {
         navbar.innerHTML = `
             <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/login">Login</a></li>
-                <li><a href="/signup">Sign Up</a></li>
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/Login.html">Login</a></li>
+                <li><a href="/Signup.html">Sign Up</a></li>
             </ul>
         `;
     }
