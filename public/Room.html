@@ -6,15 +6,28 @@
     <title>Room</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
-
   <body>
     <div id="navbar"></div>
 
     <main>
-      <h1>Room Page</h1>
-      <p>This is a placeholder for the room page.</p>
-    </main>
+        <h1 id="roomTitle">Room</h1>
 
+        <div id="messages" class="messages"></div>
+
+        <form id="messageform">
+            <input 
+            type="text" 
+            id="messageInput" 
+            placeholder="Type a message..." 
+            autocomplete="off"
+            required
+            />
+            <button type="submit">Send</button>
+        </form>
+
+        <p id="error" style="color: red;"></p>
+    </main>
+    <script src="/room.js"></script>
     <script src="/navbar.js"></script>
   </body>
   </html>
