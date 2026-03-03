@@ -25,6 +25,7 @@ db.run(`
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   is_private INTEGER DEFAULT 0,
   join_code TEXT,
+  description TEXT,
   FOREIGN KEY (creator_id) REFERENCES users(id)
 )
 `);

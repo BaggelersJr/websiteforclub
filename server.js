@@ -105,13 +105,18 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/rooms", requireAuth, (req, res) => {
-    const { name } = req.body;
+    const { name, description } = req.body;
     const creatorId = req.session.userId;
     if (!name || name.trim().length < 3) {
         return res.json({ success: false, message: "Room name must be at least 3 characters"});
     }
-    const insert = `INSERT INTO rooms (name, creator_id) VALUES (?, ?)`;
-    db.run(insert, [name.trim(), creatorId], function (err) {
+    const desc = description ? description.trim() : null;
+
+    if (desc && desc.length > 300) {
+        return res.json({ success: false, message: "Description too long" });
+    }
+    const insert = `INSERT INTO rooms (name, description, creator_id) VALUES (?, ?, ?)`;
+    db.run(insert, [name.trim(), desc, creatorId], function (err) {
         if (err) {
             if (err.message.includes("UNIQUE")) {
                 return res.json({ success: false, message: "Room name already exists"});
@@ -131,9 +136,10 @@ app.post("/rooms", requireAuth, (req, res) => {
 
 app.get("/rooms", requireAuth, (req, res) => {
     const sql = `
-        SELECT r.id, r.name, r.created_at, u.username AS creator
+        SELECT r.id, r.name, r.description,r.created_at, u.username AS creator, COUNT(rm.user_id) AS member_count
         FROM rooms r
         JOIN users u ON r.creator_id = u.id
+        LEFT JOIN room_members rm ON r.id = rm.room_id
         WHERE r.id NOT IN (
             SELECT room_id FROM room_members WHERE user_id = ?
         )
@@ -150,11 +156,13 @@ app.get("/rooms", requireAuth, (req, res) => {
 
 
 app.get("/my-rooms", requireAuth, (req, res) => {
-    const sql = `SELECT r.id, r.name, r.created_at, u.username AS creator
+    const sql = `SELECT r.id, r.name, r.description, r.created_at, u.username AS creator, COUNT(rm2.user_id) AS member_count
                     FROM rooms r
                     JOIN users u ON r.creator_id = u.id
                     JOIN room_members rm ON r.id = rm.room_id
+                    LEFT JOIN room_members rm2 ON r.id = rm2.room_id
                     WHERE rm.user_id = ?
+                    GROUP BY r.id
                     ORDER BY r.created_at DESC`;
     db.all(sql, [req.session.userId], (err, rooms) => {
         if (err) {
@@ -254,5 +262,30 @@ app.get("/rooms/:id/messages", requireAuth, (req, res) => {
     });
 });
 
+app.get("/rooms/:id", requireAuth, (req, res) => {
+    const roomId = parseInt(req.params.id);
+
+    const sql = `
+        SELECT 
+            r.id,
+            r.name,
+            r.description,
+            u.username AS creator,
+            COUNT(rm.user_id) AS member_count
+        FROM rooms r
+        JOIN users u ON r.creator_id = u.id
+        LEFT JOIN room_members rm ON r.id = rm.room_id
+        WHERE r.id = ?
+        GROUP BY r.id
+    `;
+
+    db.get(sql, [roomId], (err, room) => {
+        if (err || !room) {
+            return res.json({ success: false, message: "Room not found" });
+        }
+
+        res.json({ success: true, room });
+    });
+});
 
 

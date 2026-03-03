@@ -29,3 +29,14 @@ button#Submit {
 button#Submit:active { 
     background-color: grey;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);}
+.room-card {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+}
+
+.room-card button {
+  margin-top: 10px;
+}
+/* lowk we need to style ts more */
