@@ -4,6 +4,14 @@ const db = require("./db");
 const app = express();
 const PORT = 3000;
 const bcrypt = require("bcrypt");
+const session = require("express-session");
+
+app.use(session({
+    secret: "thekeyisverysecret123",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+}));
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -70,4 +78,14 @@ app.post("/login", (req, res) => {
     }
   });
 });
+
+app.post("/logout", (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.json({ success: false, message: "Logout failed" });
+        }
+        res.json({ success: true });
+    });
+});
+
 
