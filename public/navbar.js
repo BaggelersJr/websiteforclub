@@ -10,9 +10,16 @@ async function loadnav() {
                 <li><a href="/Discover.html">Discover</a></li>
                 <li><a href="/Create.html">Create</a></li>
                 <li><a href="/Profile.html">Profile</a></li>
-                <li><a href="/Login.html">Logout</a></li>
+                <li><button id="logoutBtn">Logout</button></li>
             </ul>
         `;
+        document.getElementById("logoutBtn").addEventListener("click", async function () {
+            const res = await fetch("/logout", { method: "POST" });
+            const data = await res.json();
+            if (data.success) {
+                window.location.href = "/Login.html";
+            }
+        });
     }
     else {
         navbar.innerHTML = `
