@@ -8,6 +8,10 @@ const db = new sqlite3.Database("./database.db", (err) => {
   }
 });
 
+db.serialize(() => {
+
+db.run("PRAGMA foreign_keys = ON");
+
 db.run(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -54,12 +58,11 @@ db.run(`
 );
 `)
 
-db.run("PRAGMA foreign_keys = ON");
-
 db.run(`CREATE INDEX IF NOT EXISTS idxmesroomid ON messages(room_id);`);
 db.run(`CREATE INDEX IF NOT EXISTS idxmescreatedat ON messages(created_at);`);
 db.run(`CREATE INDEX IF NOT EXISTS idxrmuserid ON room_members(user_id);`);
 db.run(`CREATE INDEX IF NOT EXISTS idxrmroomid ON room_members(room_id);`);
-    
+
+});
 
 module.exports = db;

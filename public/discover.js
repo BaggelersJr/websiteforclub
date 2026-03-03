@@ -12,7 +12,7 @@ async function loadRooms() {
 
     container.innerHTML = "";
 
-    if (data.rooms.length === 0) {
+    if (!data.rooms || data.rooms.length === 0) {
         container.innerHTML = "<p>No rooms available.</p>";
         return;
     }

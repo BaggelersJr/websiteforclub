@@ -136,13 +136,20 @@ app.post("/rooms", requireAuth, (req, res) => {
 
 app.get("/rooms", requireAuth, (req, res) => {
     const sql = `
-        SELECT r.id, r.name, r.description,r.created_at, u.username AS creator, COUNT(rm.user_id) AS member_count
+        SELECT 
+            r.id,
+            r.name,
+            r.description,
+            r.created_at,
+            u.username AS creator,
+            COUNT(rm2.user_id) AS member_count
         FROM rooms r
         JOIN users u ON r.creator_id = u.id
-        LEFT JOIN room_members rm ON r.id = rm.room_id
-        WHERE r.id NOT IN (
-            SELECT room_id FROM room_members WHERE user_id = ?
-        )
+        LEFT JOIN room_members rm2 ON r.id = rm2.room_id
+        LEFT JOIN room_members rm_user 
+            ON r.id = rm_user.room_id AND rm_user.user_id = ?
+        WHERE rm_user.id IS NULL
+        GROUP BY r.id
         ORDER BY r.created_at DESC
     `;
 
