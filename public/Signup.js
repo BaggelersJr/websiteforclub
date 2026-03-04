@@ -13,11 +13,12 @@ document.getElementById("signupForm").addEventListener("submit", async function 
   const data = await response.json();
 
 const errorElement = document.getElementById("error");
+  const errorElement = document.getElementById("errorMessage");
 
-if (data.success) {
-  errorElement.textContent = "";
-  window.location.href = "/Login.html";
-} else {
-  errorElement.textContent = data.message;
-}
+  if (data.success) {
+    errorElement.textContent = "";
+    window.location.href = "/Login.html";
+  } else {
+    errorElement.textContent = data.message;
+  }
 });
