@@ -10,6 +10,7 @@ body {
     background-size: 50%; 
     background-repeat: repeat;
     animation: moveDiagonal 25s linear infinite;
+    font-family: 'Verdana', Arial;
 }
 
 @keyframes moveDiagonal {
@@ -20,12 +21,19 @@ body {
         background-position: -1000px 1000px;
     }
 } 
-.card { 
+.card {
     display: flex;
-    flex-direction: column; 
-    height: 400px; width: 700px; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); 
-    border-radius: 5px; background-color: rgb(135, 190, 241);
-    padding: 20px; text-align: left;} 
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;     
+    height: 400px; 
+    width: 700px; 
+    border-radius: 5px; 
+    background-color: rgb(135, 190, 241);
+    padding: 20px;
+    text-align: center;    
+    box-shadow: 0 0 20px 5px rgba(173, 216, 230, 0.6);
+}
 input { 
     text-align: left;
      margin-bottom: 15px; 
@@ -73,7 +81,6 @@ button#Login {
 img#logo {
     width: 200px;
     height: 200px;
-        
     position: absolute;
     top: -35px;
     left: 20px;
