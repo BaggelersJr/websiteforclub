@@ -11,9 +11,22 @@
     <div id="navbar"></div>
 
     <main>
-      <h1>Create Page</h1>
-      <p>This is a placeholder for the create page.</p>
-    </main>
+      <h1>Create Room</h1>
 
+      <form id="createRoomForm">
+        <input type="text" id="roomName" placeholder="Room name" required />
+        <textarea id="description" placeholder="Description"></textarea>
+
+        <label>
+          <input type="checkbox" id="privateRoom" />
+          Private Room
+        </label>
+
+        <button type="submit">Create</button>
+      </form>
+
+      <p id="error"></p>
+    </main>
+    <script src="/create.js"></script>
     <script src="/navbar.js"></script>
   </body>

@@ -2,12 +2,13 @@ const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get("id");
 
 const messagesDiv = document.getElementById("messages");
-const form = document.getElementById("messageForm");
+const form = document.getElementById("messageform");
 const input = document.getElementById("messageInput");
 const errorElement = document.getElementById("error");
 
 if (!roomId) {
   errorElement.textContent = "Invalid room.";
+  throw new Error("No room id");
 }
 
 async function loadMessages() {
@@ -52,3 +53,4 @@ form.addEventListener("submit", async (e) => {
 });
 
 loadMessages();
+setInterval(loadMessages, 2000);

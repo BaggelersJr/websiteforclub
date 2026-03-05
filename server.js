@@ -22,6 +22,15 @@ app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
 
+function generateJoinCode() {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let code = "";
+  for (let i = 0; i < 6; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
 app.get("/auth/me", (req, res) => {
     if (req.session?.userId) {
         return res.json({ loggedIn: true });
@@ -104,37 +113,8 @@ app.post("/logout", (req, res) => {
     });
 });
 
-app.post("/rooms", requireAuth, (req, res) => {
-    const { name, description } = req.body;
-    const creatorId = req.session.userId;
-    if (!name || name.trim().length < 3) {
-        return res.json({ success: false, message: "Room name must be at least 3 characters"});
-    }
-    const desc = description ? description.trim() : null;
-
-    if (desc && desc.length > 300) {
-        return res.json({ success: false, message: "Description too long" });
-    }
-    const insert = `INSERT INTO rooms (name, description, creator_id) VALUES (?, ?, ?)`;
-    db.run(insert, [name.trim(), desc, creatorId], function (err) {
-        if (err) {
-            if (err.message.includes("UNIQUE")) {
-                return res.json({ success: false, message: "Room name already exists"});
-            }
-            return res.json({ success: false, message: "Database error"});
-        }
-        const roomId = this.lastID;
-        const insertm = `INSERT INTO room_members (user_id, room_id) VALUES (?, ?)`;
-        db.run(insertm, [creatorId, roomId], (err2) => {
-            if (err2) {
-                return res.json({ success: false, message: "Room created but membership failed"});
-            }
-            res.json({ success: true, roomId });
-        });
-    });
-});
-
 app.get("/rooms", requireAuth, (req, res) => {
+
     const sql = `
         SELECT 
             r.id,
@@ -145,20 +125,103 @@ app.get("/rooms", requireAuth, (req, res) => {
             COUNT(rm2.user_id) AS member_count
         FROM rooms r
         JOIN users u ON r.creator_id = u.id
-        LEFT JOIN room_members rm2 ON r.id = rm2.room_id
-        LEFT JOIN room_members rm_user 
-            ON r.id = rm_user.room_id AND rm_user.user_id = ?
-        WHERE rm_user.id IS NULL
+
+        LEFT JOIN room_members rm2
+            ON r.id = rm2.room_id
+
+        LEFT JOIN room_members rm_user
+            ON r.id = rm_user.room_id
+            AND rm_user.user_id = ?
+
+        WHERE rm_user.user_id IS NULL
+        AND r.is_private = 0
+
         GROUP BY r.id
         ORDER BY r.created_at DESC
     `;
 
     db.all(sql, [req.session.userId], (err, rooms) => {
+
         if (err) {
-            return res.json({ success: false, message: "Database error" });
+            return res.json({
+                success: false,
+                message: "Database error"
+            });
         }
-        res.json({ success: true, rooms });
+
+        res.json({
+            success: true,
+            rooms
+        });
     });
+});
+
+app.post("/rooms", requireAuth, (req, res) => {
+    const creatorId = req.session.userId;
+    console.log("Creating room for user ID:", creatorId);
+    const { name, description } = req.body;
+    const is_private = req.body.is_private === "on" || req.body.is_private === true;
+    if (!name || name.trim().length < 3) {
+        return res.json({
+            success: false,
+            message: "Room name must be at least 3 characters"
+        });
+    }
+    const desc = description ? description.trim() : null;
+    if (desc && desc.length > 300) {
+        return res.json({
+            success: false,
+            message: "Description too long"
+        });
+    }
+    const joinCode = is_private ? generateJoinCode() : null;
+    const insert = `
+        INSERT INTO rooms
+        (name, description, is_private, join_code, creator_id)
+        VALUES (?, ?, ?, ?, ?)
+    `;
+    db.run(
+        insert,
+        [
+            name.trim(),
+            desc,
+            is_private ? 1 : 0,
+            joinCode,
+            creatorId
+        ],
+        function (err) {
+            if (err) {
+                if (err.message.includes("UNIQUE")) {
+                    return res.json({
+                        success: false,
+                        message: "Room name already exists"
+                    });
+                }
+                return res.json({
+                    success: false,
+                    message: "Database error"
+                });
+            }
+            const roomId = this.lastID;
+            db.run(
+                `INSERT INTO room_members (user_id, room_id) VALUES (?, ?)`,
+                [creatorId, roomId],
+                (err2) => {
+                    if (err2) {
+                        return res.json({
+                            success: false,
+                            message: "Room created but membership failed"
+                        });
+                    }
+                    res.json({
+                        success: true,
+                        roomId,
+                        joinCode
+                    });
+                }
+            );
+        }
+    );
 });
 
 
@@ -295,4 +358,47 @@ app.get("/rooms/:id", requireAuth, (req, res) => {
     });
 });
 
+app.post("/rooms/join-code", requireAuth, (req, res) => {
 
+    const { code } = req.body;
+    const userId = req.session.userId;
+
+    const findRoom = `SELECT id FROM rooms WHERE join_code = ?`;
+
+    db.get(findRoom, [code], (err, room) => {
+
+        if (err || !room) {
+        return res.json({
+            success: false,
+            message: "Invalid join code"
+        });
+        }
+
+        const insert = `
+        INSERT INTO room_members (user_id, room_id)
+        VALUES (?, ?)
+        `;
+
+        db.run(insert, [userId, room.id], function(err2){
+
+        if (err2 && err2.message.includes("UNIQUE")) {
+            return res.json({
+            success: true,
+            roomId: room.id
+            });
+        }
+
+        if (err2) {
+            return res.json({
+            success:false,
+            message:"Database error"
+            });
+        }
+
+        res.json({
+            success:true,
+            roomId: room.id
+      });
+    });
+  });
+});

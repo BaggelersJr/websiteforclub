@@ -50,3 +50,25 @@ async function loadRooms() {
 }
 
 loadRooms();
+
+document.getElementById("joinCodeBtn").addEventListener("click", async () => {
+
+    const code = document.getElementById("joinCodeInput").value.trim();
+    const error = document.getElementById("joinError");
+
+    if (!code) return;
+
+    const response = await fetch("/rooms/join-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+        window.location.href = `/room.html?id=${data.roomId}`;
+    } else {
+        error.textContent = data.message;
+    }
+});
