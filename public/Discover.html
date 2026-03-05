@@ -3,27 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile</title>
+    <title>Discover — C Squared</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
-
   <body>
     <div id="navbar"></div>
 
-    <main>
-      <h2>Join with Code</h2>
-        <div class="join-code-box">
-          <input id="joinCodeInput" placeholder="Enter Join Code" />
-          <button id="joinCodeBtn">Join</button>
+    <main class="page-content">
+
+      <div class="join-code-banner">
+        <div class="join-code-text">
+          <h3>Got an invite code?</h3>
+          <p>Enter it below to join a private room.</p>
         </div>
-        <p id="joinError" style="color:red;"></p>
+        <div class="join-code-controls">
+          <input id="joinCodeInput" type="text" placeholder="e.g. AB12CD" maxlength="6" />
+          <button id="joinCodeBtn" class="btn-sm-primary">Join Room</button>
+        </div>
+        <p id="joinError" class="join-code-error"></p>
+      </div>
+
+      <div class="discover-header">
         <h1>Discover Rooms</h1>
+        <p>Browse public rooms and find your community.</p>
+      </div>
 
-        <div id="roomsContainer"></div>
+      <p id="error" class="discover-error"></p>
+      <div id="roomsContainer"></div>
 
-        <p id="error" style="color: red;"></p>
-    </div>
+    </main>
 
-  <script src="/navbar.js"></script>
-  <script src="/discover.js"></script>
+    <script src="/navbar.js"></script>
+    <script src="/discover.js"></script>
   </body>
+</html>

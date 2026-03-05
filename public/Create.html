@@ -3,30 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Create</title>
+    <title>Create Room — C Squared</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
-
   <body>
     <div id="navbar"></div>
 
-    <main>
-      <h1>Create Room</h1>
+    <main class="page-content-sm">
+      <div class="auth-card">
 
-      <form id="createRoomForm">
-        <input type="text" id="roomName" placeholder="Room name" required />
-        <textarea id="description" placeholder="Description"></textarea>
+        <div class="auth-header">
+          <h1>Create a Room</h1>
+          <p>Set up a new space for your group or community.</p>
+        </div>
 
-        <label>
-          <input type="checkbox" id="privateRoom" />
-          Private Room
-        </label>
+        <form id="createRoomForm">
+          <label for="roomName">Room Name</label>
+          <input type="text" id="roomName" placeholder="e.g. Study Group, Book Club" required />
 
-        <button type="submit">Create</button>
-      </form>
+          <label for="description">Description <span class="label-optional">(optional)</span></label>
+          <textarea id="description" placeholder="What's this room about?"></textarea>
 
-      <p id="error"></p>
+          <label class="checkbox-label">
+            <input type="checkbox" id="privateRoom" />
+            Make this room private
+          </label>
+          <p class="checkbox-hint">Private rooms are invite-only and require a join code to enter.</p>
+
+          <p id="error"></p>
+
+          <button type="submit">Create Room</button>
+        </form>
+
+      </div>
     </main>
-    <script src="/create.js"></script>
+
     <script src="/navbar.js"></script>
+    <script src="/create.js"></script>
   </body>
+</html>

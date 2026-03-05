@@ -9,9 +9,18 @@ const privateCheckbox = document.getElementById("private");
 const joinCodeContainer = document.getElementById("joinCodeContainer");
 const joinCodeInput = document.getElementById("joinCode");
 const backBtn = document.getElementById("backBtn");
+const copyCodeBtn = document.getElementById("copyCodeBtn");
 
 backBtn.addEventListener("click", () => {
     window.location.href = `/room.html?id=${roomId}`;
+});
+
+copyCodeBtn.addEventListener("click", () => {
+    if (!joinCodeInput.value) return;
+    navigator.clipboard.writeText(joinCodeInput.value).then(() => {
+        copyCodeBtn.textContent = "Copied!";
+        setTimeout(() => { copyCodeBtn.textContent = "Copy"; }, 2000);
+    });
 });
 
 async function loadRoom() {
@@ -20,7 +29,7 @@ async function loadRoom() {
         const data = await res.json();
 
         if (!data.success) {
-            message.style.color = "red";
+            message.style.color = "#c0392b";
             message.textContent = data.message || "Failed to load room.";
             return;
         }
@@ -28,7 +37,7 @@ async function loadRoom() {
         const room = data.room;
 
         if (data.currentUserId !== room.creator_id) {
-            message.style.color = "red";
+            message.style.color = "#c0392b";
             message.textContent = "You are not the owner of this room.";
             form.style.display = "none";
             return;
@@ -46,7 +55,7 @@ async function loadRoom() {
         }
 
     } catch (err) {
-        message.style.color = "red";
+        message.style.color = "#c0392b";
         message.textContent = "Error loading room settings.";
     }
 }
@@ -57,7 +66,6 @@ privateCheckbox.addEventListener("change", () => {
 
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
-
     message.textContent = "";
 
     const name = nameInput.value.trim();
@@ -74,10 +82,10 @@ form.addEventListener("submit", async (e) => {
         const data = await res.json();
 
         if (!data.success) {
-            message.style.color = "red";
+            message.style.color = "#c0392b";
             message.textContent = data.message || "Failed to save changes.";
         } else {
-            message.style.color = "green";
+            message.style.color = "#27ae60";
             message.textContent = "Changes saved successfully.";
 
             if (data.joinCode) {
@@ -88,8 +96,9 @@ form.addEventListener("submit", async (e) => {
                 joinCodeInput.value = "";
             }
         }
+
     } catch (err) {
-        message.style.color = "red";
+        message.style.color = "#c0392b";
         message.textContent = "Error saving changes.";
     }
 });

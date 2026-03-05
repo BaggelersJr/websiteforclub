@@ -3,41 +3,58 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Room Settings</title>
+        <title>Room Settings — C Squared</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="/styles.css" />
     </head>
     <body>
         <div id="navbar"></div>
 
-        <main>
-            <h1>Room Settings</h1>
+        <main class="page-content-sm">
+            <div class="settings-back">
+                <button class="btn-back" id="backBtn">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                    Back to Room
+                </button>
+            </div>
 
-            <button id="backBtn">Back to Room</button>
-
-            <form id="settingsForm">
-                <label>Room Name</label>
-                <input type="text" id="name" required />
-
-                <label>Description</label>
-                <textarea id="description"></textarea>
-
-                <label>
-                    <input type="checkbox" id="private" />
-                    Private Room
-                </label>
-
-                <div id="joinCodeContainer" style="display:none;">
-                    <label>Join Code</label>
-                    <input type="text" id="joinCode" readonly />
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h1>Room Settings</h1>
+                    <p>Update your room's name, description, and privacy.</p>
                 </div>
 
-                <button type="submit">Save Changes</button>
-            </form>
+                <form id="settingsForm">
+                    <label for="name">Room Name</label>
+                    <input type="text" id="name" required />
 
-            <p id="message"></p>
+                    <label for="description">Description <span class="label-optional">(optional)</span></label>
+                    <textarea id="description"></textarea>
+
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="private" />
+                        Private Room
+                    </label>
+                    <p class="checkbox-hint">Private rooms require a join code to enter.</p>
+
+                    <div id="joinCodeContainer" style="display:none;">
+                        <label for="joinCode">Join Code</label>
+                        <div class="join-code-display">
+                            <input type="text" id="joinCode" readonly />
+                            <button type="button" id="copyCodeBtn" class="btn-copy">Copy</button>
+                        </div>
+                    </div>
+
+                    <p id="message"></p>
+
+                    <button type="submit">Save Changes</button>
+                </form>
+            </div>
         </main>
 
-        <script src="/settings.js"></script>
         <script src="/navbar.js"></script>
+        <script src="/settings.js"></script>
     </body>
 </html>

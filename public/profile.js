@@ -1,20 +1,35 @@
 const userInfoDiv = document.getElementById("userInfo");
 const roomsContainer = document.getElementById("myRooms");
+const roomError = document.getElementById("roomError");
+const profileAvatar = document.getElementById("profileAvatar");
 
 async function loadUserInfo() {
     const res = await fetch("/profile/info");
     const data = await res.json();
 
     if (!data.success) {
-        userInfoDiv.innerHTML = `<p>${data.message}</p>`;
+        userInfoDiv.innerHTML = `<p class="profile-meta-error">${data.message}</p>`;
         return;
     }
 
     const user = data.user;
 
+    const initials = user.username.slice(0, 2).toUpperCase();
+    profileAvatar.textContent = initials;
+
     userInfoDiv.innerHTML = `
-        <p><strong>Username:</strong> ${user.username}</p>
-        <p><strong>Email:</strong> ${user.email || "Not provided"}</p>
+        <h2 class="profile-username">${user.username}</h2>
+        <p class="profile-email">${user.email || "No email provided"}</p>
+        <div class="profile-meta">
+            <div class="profile-meta-item">
+                <span class="profile-meta-label">Username</span>
+                <span class="profile-meta-value">${user.username}</span>
+            </div>
+            <div class="profile-meta-item">
+                <span class="profile-meta-label">Email</span>
+                <span class="profile-meta-value">${user.email || "—"}</span>
+            </div>
+        </div>
     `;
 }
 
@@ -22,15 +37,16 @@ async function loadRooms() {
     const res = await fetch("/profile/rooms");
     const data = await res.json();
 
+    roomError.textContent = "";
+    roomsContainer.innerHTML = "";
+
     if (!data.success) {
-        roomsContainer.innerHTML = `<p>${data.message || "Error loading rooms"}</p>`;
+        roomsContainer.innerHTML = `<p class="empty-state">${data.message || "Error loading rooms"}</p>`;
         return;
     }
 
-    roomsContainer.innerHTML = "";
-
     if (!data.rooms || data.rooms.length === 0) {
-        roomsContainer.innerHTML = "<p>You are not in any rooms.</p>";
+        roomsContainer.innerHTML = `<p class="empty-state">You haven't joined any rooms yet.</p>`;
         return;
     }
 
@@ -39,39 +55,39 @@ async function loadRooms() {
         div.classList.add("room-card");
 
         div.innerHTML = `
-            <h3>${room.name}</h3>
-            <p>${room.description || "No description"}</p>
-            <button class="open-btn">Open</button>
-            <button class="leave-btn">Leave</button>
+            <div class="room-card-body">
+                <h3>${room.name}</h3>
+                <p>${room.description || "No description"}</p>
+            </div>
+            <div class="room-card-actions">
+                <button class="open-btn btn-sm-primary">Open</button>
+                <button class="leave-btn btn-sm-ghost">Leave</button>
+            </div>
+            <p class="room-card-error"></p>
         `;
 
         const openBtn = div.querySelector(".open-btn");
         const leaveBtn = div.querySelector(".leave-btn");
+        const cardError = div.querySelector(".room-card-error");
 
         openBtn.onclick = () => {
             window.location.href = `/room.html?id=${room.id}`;
         };
 
         leaveBtn.onclick = async () => {
-            const res = await fetch(`/rooms/${room.id}/leave`, {
-                method: "POST"
-            });
-
+            cardError.textContent = "";
+            const res = await fetch(`/rooms/${room.id}/leave`, { method: "POST" });
             const result = await res.json();
 
             if (result.success) {
                 loadRooms();
             } else {
-                alert(result.message);
+                cardError.textContent = result.message;
             }
         };
 
         roomsContainer.appendChild(div);
     });
-}
-
-function openRoom(id) {
-    window.location.href = `/room.html?id=${id}`;
 }
 
 loadUserInfo();

@@ -3,26 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SignUp</title>
-    <link rel="stylesheet" href="styles.css" />
+    <title>Sign Up — C Squared</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <div id="navbar"></div>
-    <img src="csquared-removebg-preview.png" id = "logo">
-    <div class="card">
-      <form id="signupForm">
-        <h2>Enter Email</h2>
-        <input id="email" type="text" placeholder="Email"/>
-        <h2>Create Username</h2>
-        <input id="username" type="text" placeholder="Username"/>
-        <h2>Create Password</h2>
-        <input id="password" type="password" class="form-control" placeholder="Password"/>
-        <p id="error" style="color: red"></p>
-        <button id="Submit">Submit</button>
-        <p id="error" style="color: red"></p>
-      </form>
-    </div>
+
+    <main class="page-content-sm">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>Create an account</h1>
+          <p>Join C Squared and start connecting!</p>
+        </div>
+
+        <form id="signupForm">
+          <label for="email">Email <span class="label-optional">(optional)</span></label>
+          <input id="email" type="email" placeholder="you@example.com" />
+
+          <label for="username">Username</label>
+          <input id="username" type="text" placeholder="Choose a username" required />
+
+          <label for="password">Password</label>
+          <input id="password" type="password" placeholder="At least 8 characters" required />
+
+          <p id="error"></p>
+
+          <button type="submit">Create Account</button>
+        </form>
+
+        <p class="auth-footer">Already have an account? <a href="/Login.html">Log in</a></p>
+      </div>
+    </main>
+
+    <script src="/navbar.js"></script>
+    <script src="/Signup.js"></script>
   </body>
-  <script src="/navbar.js"></script>
-  <script src="/Signup.js"></script>
 </html>

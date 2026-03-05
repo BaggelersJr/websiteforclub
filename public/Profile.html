@@ -1,26 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Profile</title>
-      <link rel="stylesheet" href="/styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile — C Squared</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-      <div id="navbar"></div>
+    <div id="navbar"></div>
 
-      <main>
-          <h1>Profile</h1>
+    <main class="page-content">
+      <div class="profile-layout">
 
+        <aside class="profile-sidebar">
+          <div class="profile-avatar" id="profileAvatar"></div>
           <div id="userInfo">
-              <p>Loading user info...</p>
+            <p class="loading-text">Loading...</p>
           </div>
+        </aside>
 
-          <h2>My Rooms</h2>
+        <section class="profile-rooms">
+          <div class="profile-rooms-header">
+            <h2>My Rooms</h2>
+          </div>
+          <p id="roomError" class="profile-room-error"></p>
           <div id="myRooms"></div>
-      </main>
+        </section>
 
-      <script src="/profile.js"></script>
-      <script src="/navbar.js"></script>
+      </div>
+    </main>
+
+    <script src="/navbar.js"></script>
+    <script src="/profile.js"></script>
   </body>
 </html>

@@ -3,26 +3,39 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
-    <link rel="stylesheet" href="styles.css" />
+    <title>Login — C Squared</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <div id="navbar"></div>
-    <form method="get" name="loginForm" id="loginForm">
-    <img src="csquared-removebg-preview.png" id = "logo">
-    <div id="navbar"></div>
-    <form method="get" name="loginForm" id="loginForm">
-      <div class="card">
-        <h2>Username</h2>
-        <input id="username" name="username" type="text" placeholder="Username or Email" required/>
-        <h2>Password</h2>
-        <input id="password" name="password" type="password" placeholder="Password" required/>
-        <p id="error" style="color: red"></p>
-        <button type="submit" id="Login">Login</button>
-        <p id="error" style="color: red"></p>
+
+    <main class="page-content-sm">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>Welcome back</h1>
+          <p>Sign in to your C Squared account</p>
+        </div>
+
+        <form id="loginForm">
+          <label for="username">Username or Email</label>
+          <input id="username" name="username" type="text" placeholder="Enter your username or email" required />
+
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="Enter your password" required />
+
+          <p id="error"></p>
+
+          <button type="submit">Login</button>
+        </form>
+
+        <p class="auth-footer">Don't have an account? <a href="/Signup.html">Sign up</a></p>
       </div>
-    </form>
+    </main>
+
+    <script src="/navbar.js"></script>
+    <script src="/Login.js"></script>
   </body>
-  <script src="/navbar.js"></script>
-  <script src="/Login.js"></script>
 </html>

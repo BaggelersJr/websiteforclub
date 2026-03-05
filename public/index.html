@@ -3,15 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Homepage</title>
+    <title>C Squared</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
-
   <body>
     <div id="navbar"></div>
 
-    <main>
-      <h1>Work in Progress</h1>
+    <main class="home-main">
+      <section class="hero">
+        <div class="hero-tag">For Everyone, By Everyone</div>
+        <h1 class="hero-title">Better conversations.<br/>Better collaboration.</h1>
+        <p class="hero-sub">C Squared aims to bring your groups in touch for anything.</p>
+        <div class="hero-actions">
+          <a href="/Signup.html" class="btn-primary">Get started free</a>
+          <a href="/Discover.html" class="btn-ghost">Guest browsing coming soon!</a>
+        </div>
+      </section>
+
+      <section class="features">
+        <div class="feature-card">
+          <h3>Real-time chat</h3>
+          <p>Messages delivered instantly for fluid conversations.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Private rooms</h3>
+          <p>Create invite-only spaces with join codes for your private space.</p>
+        </div>
+        <div class="feature-card">
+          <h3>Open communities</h3>
+          <p>Discover and join public rooms to connect with like-minded people.</p>
+        </div>
+      </section>
     </main>
 
     <script src="/navbar.js"></script>
