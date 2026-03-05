@@ -1,26 +1,22 @@
-body { 
-    display: flex; 
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    position: relative;
-    
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-image: url('background.png');
-    background-size: 50%; 
+    background-size: 50%;
     background-repeat: repeat;
     animation: moveDiagonal 25s linear infinite;
-    font-family: 'Verdana', Arial;
+    z-index: -1;
+    pointer-events: none;
 }
 
 @keyframes moveDiagonal {
-    from {
-        background-position: 0 0;
-    }
-    to {
-        background-position: -1000px 1000px;
-    }
-} 
+    from { background-position: 0 0; }
+    to { background-position: -1000px 1000px; }
+}
 
 :root {
     --blue-light:   #ddeeff;
@@ -194,8 +190,19 @@ img {
 .nav-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 main {
-    margin-top: var(--navbar-h);
+    margin-top: calc(var(--navbar-h) + 24px);
     flex: 1;
+}
+
+main.room-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    height: calc(100vh - var(--navbar-h));
+    margin-top: var(--navbar-h);
+    padding: 0;
+    max-width: 100%;
+    width: 100%;
+    overflow: hidden;
 }
 
 .home-main {
@@ -1162,16 +1169,20 @@ main.room-layout {
 
 .chat-form {
     display: flex;
+    flex-direction: row;
     align-items: center;
     gap: 10px;
     padding: 16px 20px;
     background: var(--white);
     border-top: 1px solid var(--grey-200);
     flex-shrink: 0;
+    width: 100%;
 }
 
-.chat-form input {
-    flex: 1;
+.chat-form input[type="text"] {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 0;
     margin-bottom: 0;
     border-radius: 999px;
     padding: 10px 18px;
@@ -1179,14 +1190,14 @@ main.room-layout {
     background: var(--grey-50);
 }
 
-.chat-form input:focus {
+.chat-form input[type="text"]:focus {
     background: var(--white);
 }
 
 .chat-send-btn {
+    flex: 0 0 40px;
     width: 40px;
     height: 40px;
-    flex-shrink: 0;
     border-radius: 50%;
     background: var(--blue-accent);
     border: none;
@@ -1253,9 +1264,6 @@ main.room-layout {
     }
 }
 
-/* =====================
-   Settings & Members Pages
-   ===================== */
 .settings-back {
     margin-bottom: 16px;
 }
@@ -1264,21 +1272,23 @@ main.room-layout {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: none;
-    border: none;
-    color: var(--grey-500);
+    background: #6aaed6;
+    border: 1px solid var(--grey-300);
+    border-radius: var(--radius-sm);
+    color: var(--grey-600);
     font-family: var(--font-body);
     font-size: 0.88rem;
     cursor: pointer;
-    padding: 6px 0;
-    transition: color var(--transition);
+    padding: 7px 14px;
+    transition: color var(--transition), border-color var(--transition), background var(--transition);
 }
 
 .btn-back:hover {
     color: var(--grey-900);
+    border-color: var(--grey-400);
+    background: var(--grey-100);
 }
 
-/* Join code row inside settings */
 .join-code-display {
     display: flex;
     gap: 10px;
@@ -1314,7 +1324,6 @@ main.room-layout {
     color: var(--blue-deep);
 }
 
-/* Members list */
 .members-error {
     color: #c0392b;
     font-size: 0.85rem;
@@ -1389,4 +1398,23 @@ main.room-layout {
     background: var(--grey-100);
     color: var(--grey-500);
     border-color: var(--grey-300);
+}
+
+body:has(.room-layout) {
+    overflow: hidden;
+}
+
+body:has(.room-layout) #navbar {
+    position: fixed;
+}
+
+main.room-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    height: calc(100vh - var(--navbar-h));
+    margin-top: var(--navbar-h);
+    padding: 0;
+    max-width: 100%;
+    width: 100%;
+    overflow: hidden;
 }
