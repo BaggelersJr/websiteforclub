@@ -11,6 +11,7 @@ if (!roomId) {
   throw new Error("No room id");
 }
 
+
 async function loadMessages() {
     const response = await fetch(`/rooms/${roomId}/messages`);
     const data = await response.json();
@@ -18,6 +19,14 @@ async function loadMessages() {
     if (!data.success) {
     errorElement.textContent = data.message;
         return;
+    }
+
+    if (data.room.creator_id === data.currentUserId && data.room.is_private) {
+    const codeDiv = document.createElement("div");
+    codeDiv.innerHTML = `
+        <p><strong>Join Code:</strong> ${data.room.join_code}</p>
+    `;
+    document.querySelector("main").prepend(codeDiv);
     }
 
     messagesDiv.innerHTML = "";

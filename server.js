@@ -303,31 +303,48 @@ app.get("/rooms/:id/messages", requireAuth, (req, res) => {
         return res.json({ success: false, message: "Invalid room" });
     }
 
-    const checkmem = `
-        SELECT id FROM room_members 
-        WHERE user_id = ? AND room_id = ?
+    const roomSql = `
+        SELECT *
+        FROM rooms
+        WHERE id = ?
     `;
 
-    db.get(checkmem, [userId, roomId], (err, membership) => {
-        if (err || !membership) {
-            return res.json({ success: false, message: "Not a member of this room" });
+    db.get(roomSql, [roomId], (err, room) => {
+        if (err || !room) {
+            return res.json({ success: false, message: "Room not found" });
         }
 
-        const sql = `
-            SELECT m.id, m.content, m.created_at, u.username AS author
-            FROM messages m
-            JOIN users u ON m.user_id = u.id
-            WHERE m.room_id = ?
-            ORDER BY m.created_at DESC
-            LIMIT 50
+        const membershipSql = `
+            SELECT id FROM room_members
+            WHERE user_id = ? AND room_id = ?
         `;
 
-        db.all(sql, [roomId], (err2, messages) => {
-            if (err2) {
-                return res.json({ success: false, message: "Database error" });
+        db.get(membershipSql, [userId, roomId], (err2, membership) => {
+            if (err2 || !membership) {
+                return res.json({ success: false, message: "Not a member" });
             }
 
-            res.json({ success: true, messages });
+            const messagesSql = `
+                SELECT m.id, m.content, m.created_at, u.username AS author
+                FROM messages m
+                JOIN users u ON m.user_id = u.id
+                WHERE m.room_id = ?
+                ORDER BY m.created_at DESC
+                LIMIT 100
+            `;
+
+            db.all(messagesSql, [roomId], (err3, messages) => {
+                if (err3) {
+                    return res.json({ success: false, message: "Database error" });
+                }
+
+                res.json({
+                    success: true,
+                    room,
+                    currentUserId: userId,
+                    messages
+                });
+            });
         });
     });
 });
@@ -340,6 +357,9 @@ app.get("/rooms/:id", requireAuth, (req, res) => {
             r.id,
             r.name,
             r.description,
+            r.join_code,
+            r.is_private,
+            r.creator_id,
             u.username AS creator,
             COUNT(rm.user_id) AS member_count
         FROM rooms r
@@ -354,7 +374,11 @@ app.get("/rooms/:id", requireAuth, (req, res) => {
             return res.json({ success: false, message: "Room not found" });
         }
 
-        res.json({ success: true, room });
+        res.json({
+            success: true,
+            room,
+            currentUserId: req.session.userId
+        });
     });
 });
 
@@ -401,4 +425,78 @@ app.post("/rooms/join-code", requireAuth, (req, res) => {
       });
     });
   });
+});
+
+app.get("/profile", requireAuth, (req, res) => {
+    const userId = req.session.userId;
+
+    const userSql = `SELECT id, username, email FROM users WHERE id = ?`;
+    const roomsSql = `
+        SELECT r.id, r.name
+        FROM rooms r
+        JOIN room_members rm ON r.id = rm.room_id
+        WHERE rm.user_id = ?
+    `;
+
+    db.get(userSql, [userId], (err, user) => {
+        if (err || !user) {
+            return res.json({ success: false });
+        }
+
+        db.all(roomsSql, [userId], (err2, rooms) => {
+            if (err2) {
+                return res.json({ success: false });
+            }
+
+            res.json({ success: true, user, rooms });
+        });
+    });
+});
+
+app.get("/profile/rooms", requireAuth, (req, res) => {
+    const sql = `
+        SELECT r.id, r.name, r.description, r.created_at
+        FROM rooms r
+        JOIN room_members rm ON r.id = rm.room_id
+        WHERE rm.user_id = ?
+        ORDER BY r.created_at DESC
+    `;
+
+    db.all(sql, [req.session.userId], (err, rooms) => {
+        if (err) {
+            return res.json({ success: false, message: "Database error" });
+        }
+
+        res.json({ success: true, rooms });
+    });
+});
+
+app.get("/profile/info", requireAuth, (req, res) => {
+    const sql = `SELECT id, username, email FROM users WHERE id = ?`;
+
+    db.get(sql, [req.session.userId], (err, user) => {
+        if (err || !user) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        res.json({ success: true, user });
+    });
+});
+
+app.get("/profile/rooms", requireAuth, (req, res) => {
+    const sql = `
+        SELECT r.id, r.name, r.description, r.created_at
+        FROM rooms r
+        JOIN room_members rm ON r.id = rm.room_id
+        WHERE rm.user_id = ?
+        ORDER BY r.created_at DESC
+    `;
+
+    db.all(sql, [req.session.userId], (err, rooms) => {
+        if (err) {
+            return res.json({ success: false, message: "Database error" });
+        }
+
+        res.json({ success: true, rooms });
+    });
 });
