@@ -18,8 +18,26 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+const http = require("http");
+const { Server } = require("socket.io");
+
+const server = http.createServer(app);
+const io = new Server(server);
+
+io.on("connection", (socket) => {
+
+  socket.on("joinRoom", (roomId) => {
+    socket.join(`room-${roomId}`);
+  });
+
+  socket.on("newMessage", (data) => {
+    io.to(`room-${data.roomId}`).emit("messageReceived", data);
+  });
+
+});
+
+server.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
 
 function generateJoinCode() {
@@ -276,21 +294,49 @@ app.post("/rooms/:id/messages", requireAuth, (req, res) => {
     const roomId = parseInt(req.params.id);
     const userId = req.session.userId;
     const { content } = req.body;
+
     if (!content || content.trim().length === 0) {
         return res.json({ success: false, message: "Message cannot be empty" });
     }
 
-    const checkmem = `SELECT id FROM room_members WHERE user_id = ? AND room_id = ?`;
+    const checkmem = `
+        SELECT id FROM room_members 
+        WHERE user_id = ? AND room_id = ?
+    `;
+
     db.get(checkmem, [userId, roomId], (err, membership) => {
         if (err || !membership) {
             return res.json({ success: false, message: "Not a member of this room" });
         }
-        const insert = `INSERT INTO messages (room_id, user_id, content) VALUES (?, ?, ?)`;
+
+        const insert = `
+            INSERT INTO messages (room_id, user_id, content)
+            VALUES (?, ?, ?)
+        `;
+
         db.run(insert, [roomId, userId, content.trim()], function (err2) {
             if (err2) {
                 return res.json({ success: false, message: "Database error" });
             }
-            res.json({ success: true, messageId: this.lastID });
+
+            db.get(
+                `SELECT username FROM users WHERE id = ?`,
+                [userId],
+                (err3, user) => {
+                    if (err3 || !user) {
+                        return res.json({
+                            success: true,
+                            messageId: this.lastID,
+                            author: "Unknown"
+                        });
+                    }
+                    res.json({
+                        success: true,
+                        messageId: this.lastID,
+                        author: user.username
+                    });
+                }
+            );
         });
     });
 });
