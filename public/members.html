@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Room Members</title>
+    <link rel="stylesheet" href="/styles.css" />
+    </head>
+    <body>
+        <div id="navbar"></div>
+
+        <main>
+            <h1>Members</h1>
+            <button onclick="window.location.href=`/room.html?id=${roomId}`">
+                Back to Room
+            </button>
+
+            <p id="error" style="color:red;"></p>
+
+            <div id="members"></div>
+        </main>
+
+        <script>
+            const urlParams = new URLSearchParams(window.location.search);
+            const roomId = urlParams.get("id");
+        </script>
+
+        <script src="/members.js"></script>
+        <script src="/navbar.js"></script>
+    </body>
+</html>

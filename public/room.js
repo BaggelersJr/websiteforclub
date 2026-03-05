@@ -71,3 +71,40 @@ form.addEventListener("submit", async (e) => {
     content
   });
 });
+
+async function loadRoomInfo() {
+    const res = await fetch(`/rooms/${roomId}`);
+    const data = await res.json();
+
+    if (!data.success) {
+        errorElement.textContent = data.message;
+        return;
+    }
+
+    const room = data.room;
+
+    document.getElementById("roomTitle").textContent = room.name;
+
+    const nav = document.createElement("div");
+    nav.classList.add("room-nav");
+
+    const membersBtn = document.createElement("button");
+    membersBtn.textContent = "Members";
+    membersBtn.onclick = () => {
+        window.location.href = `/members.html?id=${roomId}`;
+    };
+    nav.appendChild(membersBtn);
+
+    if (room.creator_id === data.currentUserId) {
+        const settingsBtn = document.createElement("button");
+        settingsBtn.textContent = "Settings";
+        settingsBtn.onclick = () => {
+        window.location.href = `/settings.html?id=${roomId}`;
+        };
+        nav.appendChild(settingsBtn);
+    }
+
+    document.querySelector("main").prepend(nav);
+}
+
+loadRoomInfo();

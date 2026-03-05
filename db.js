@@ -39,6 +39,7 @@ db.run(`
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
   room_id INTEGER NOT NULL,
+  role TEXT DEFAULT 'member',
   joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   UNIQUE(user_id, room_id),
   FOREIGN KEY (user_id) REFERENCES users(id),

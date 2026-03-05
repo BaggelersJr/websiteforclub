@@ -176,7 +176,6 @@ app.get("/rooms", requireAuth, (req, res) => {
 
 app.post("/rooms", requireAuth, (req, res) => {
     const creatorId = req.session.userId;
-    console.log("Creating room for user ID:", creatorId);
     const { name, description } = req.body;
     const is_private = req.body.is_private === "on" || req.body.is_private === true;
     if (!name || name.trim().length < 3) {
@@ -544,5 +543,108 @@ app.get("/profile/rooms", requireAuth, (req, res) => {
         }
 
         res.json({ success: true, rooms });
+    });
+});
+
+app.get("/rooms/:id/edit", requireAuth, (req, res) => {
+    const roomId = parseInt(req.params.id);
+
+    const sql = `
+        SELECT *
+        FROM rooms
+        WHERE id = ? AND creator_id = ?
+    `;
+
+    db.get(sql, [roomId, req.session.userId], (err, room) => {
+        if (err || !room) {
+            return res.json({ success: false, message: "Unauthorized or not found" });
+        }
+        if (err || !room) {
+        return res.json({ success: false, message: "Unauthorized or not found" });
+        }
+        res.json({ success: true, room });
+    });
+});
+
+app.post("/rooms/:id/edit", requireAuth, (req, res) => {
+    const roomId = parseInt(req.params.id);
+    const { name, description, is_private } = req.body;
+
+    const sql = `
+        UPDATE rooms
+        SET name = ?, description = ?, is_private = ?
+        WHERE id = ? AND creator_id = ?
+    `;
+
+    db.run(
+        sql,
+        [
+            name,
+            description,
+            is_private ? 1 : 0,
+            roomId,
+            req.session.userId
+        ],
+        function (err) {
+            if (err) {
+                return res.json({ success: false, message: "Update failed" });
+            }
+
+            res.json({ success: true });
+        }
+    );
+});
+
+app.get("/rooms/:id/members", requireAuth, (req, res) => {
+    const roomId = parseInt(req.params.id);
+
+    const sql = `
+        SELECT u.id, u.username, rm.role, rm.joined_at
+        FROM room_members rm
+        JOIN users u ON rm.user_id = u.id
+        WHERE rm.room_id = ?
+        ORDER BY 
+            CASE WHEN rm.role = 'owner' THEN 0 ELSE 1 END,
+            rm.joined_at ASC
+    `;
+
+    db.all(sql, [roomId], (err, members) => {
+
+        if (err) {
+            console.error("Members Query Error:", err.message);
+            return res.json({
+                success: false,
+                message: err.message
+            });
+        }
+
+        res.json({
+            success: true,
+            members
+        });
+    });
+});
+
+
+app.post("/rooms/:id/leave", requireAuth, (req, res) => {
+    const roomId = parseInt(req.params.id);
+    const userId = req.session.userId;
+    const checkOwner = `SELECT creator_id FROM rooms WHERE id = ?`;
+    db.get(checkOwner, [roomId], (err, room) => {
+        if (err || !room) {
+            return res.json({ success: false, message: "Room not found" });
+        }
+
+        if (room.creator_id === userId) {
+            return res.json({ success: false, message: "Owner cannot leave the room" });
+        }
+
+        const deleteMember = `DELETE FROM room_members WHERE room_id = ? AND user_id = ?`;
+        db.run(deleteMember, [roomId, userId], function(err2) {
+            if (err2) {
+                return res.json({ success: false, message: "Failed to leave room" });
+            }
+            res.json({ success: true });
+        });
     });
 });

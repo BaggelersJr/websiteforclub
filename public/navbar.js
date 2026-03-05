@@ -27,7 +27,6 @@ async function loadnav() {
                 <li><a href="/index.html">Home</a></li>
                 <li><a href="/Login.html">Login</a></li>
                 <li><a href="/Signup.html">Sign Up</a></li>
-                <li><a href="/Discover.html">Discover</a></li>
             </ul>
         `;
     }
