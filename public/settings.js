@@ -1,36 +1,53 @@
 const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get("id");
-if (!roomId) {
-  error.textContent = "Invalid room ID";
-}
+
 const form = document.getElementById("settingsForm");
-const error = document.getElementById("error");
+const message = document.getElementById("message");
+const nameInput = document.getElementById("name");
+const descriptionInput = document.getElementById("description");
 const privateCheckbox = document.getElementById("private");
 const joinCodeContainer = document.getElementById("joinCodeContainer");
 const joinCodeInput = document.getElementById("joinCode");
+const backBtn = document.getElementById("backBtn");
+
+backBtn.addEventListener("click", () => {
+    window.location.href = `/room.html?id=${roomId}`;
+});
 
 async function loadRoom() {
+    try {
+        const res = await fetch(`/rooms/${roomId}/settings`);
+        const data = await res.json();
 
-    const res = await fetch(`/rooms/${roomId}/edit`);
-    const data = await res.json();
+        if (!data.success) {
+            message.style.color = "red";
+            message.textContent = data.message || "Failed to load room.";
+            return;
+        }
 
-    if (!data.success) {
-        error.textContent = data.message;
-        return;
-    }
+        const room = data.room;
 
-    const room = data.room;
+        if (data.currentUserId !== room.creator_id) {
+            message.style.color = "red";
+            message.textContent = "You are not the owner of this room.";
+            form.style.display = "none";
+            return;
+        }
 
-    document.getElementById("name").value = room.name || "";
-    document.getElementById("description").value = room.description || "";
-    privateCheckbox.checked = room.is_private === 1;
+        nameInput.value = room.name || "";
+        descriptionInput.value = room.description || "";
+        privateCheckbox.checked = room.is_private === 1;
 
-    if (room.is_private && room.join_code) {
-        joinCodeContainer.style.display = "block";
-        joinCodeInput.value = room.join_code;
-    } 
-    else {
-        joinCodeContainer.style.display = "none";
+        if (room.is_private === 1) {
+            joinCodeContainer.style.display = "block";
+            joinCodeInput.value = room.join_code || "";
+        } else {
+            joinCodeContainer.style.display = "none";
+        }
+
+    } catch (err) {
+        message.style.color = "red";
+        message.textContent = "Error loading room settings.";
     }
 }
 
@@ -41,22 +58,39 @@ privateCheckbox.addEventListener("change", () => {
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const name = document.getElementById("name").value.trim();
-    const description = document.getElementById("description").value.trim();
+    message.textContent = "";
+
+    const name = nameInput.value.trim();
+    const description = descriptionInput.value.trim();
     const is_private = privateCheckbox.checked;
 
-    const res = await fetch(`/rooms/${roomId}/edit`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, description, is_private })
-    });
+    try {
+        const res = await fetch(`/rooms/${roomId}/edit`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, description, is_private })
+        });
 
-    const data = await res.json();
+        const data = await res.json();
 
-    if (!data.success) {
-        error.textContent = data.message;
-    } else {
-        error.textContent = "Saved.";
+        if (!data.success) {
+            message.style.color = "red";
+            message.textContent = data.message || "Failed to save changes.";
+        } else {
+            message.style.color = "green";
+            message.textContent = "Changes saved successfully.";
+
+            if (data.joinCode) {
+                joinCodeContainer.style.display = "block";
+                joinCodeInput.value = data.joinCode;
+            } else if (!is_private) {
+                joinCodeContainer.style.display = "none";
+                joinCodeInput.value = "";
+            }
+        }
+    } catch (err) {
+        message.style.color = "red";
+        message.textContent = "Error saving changes.";
     }
 });
 
